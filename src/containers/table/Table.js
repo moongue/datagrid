@@ -2,8 +2,9 @@ import React from 'react';
 import './Table.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { sortTableRows } from '../../store/actions/tableActions';
 
-function Table({ dataTable: { data } }) {
+function Table(props) {
   return (
     <>
       <div className="search">
@@ -14,17 +15,47 @@ function Table({ dataTable: { data } }) {
       </div>
       <div className="table">
         <div className="table-row table__header">
-          <button type="button">id</button>
+          <button
+            onClick={props.sortTableRows.bind(this, 'id')}
+            type="button"
+          >
+            id
+          </button>
           <button type="button" disabled>
             img
           </button>
-          <button type="button">name</button>
-          <button type="button">amount</button>
-          <button type="button">transaction</button>
-          <button type="button">city</button>
-          <button type="button">status</button>
+          <button
+            onClick={props.sortTableRows.bind(this, 'name')}
+            type="button"
+          >
+            name
+          </button>
+          <button
+            onClick={props.sortTableRows.bind(this, 'amount')}
+            type="button"
+          >
+            amount
+          </button>
+          <button
+            onClick={props.sortTableRows.bind(this, 'transactionType')}
+            type="button"
+          >
+            transaction
+          </button>
+          <button
+            onClick={props.sortTableRows.bind(this, 'locationName')}
+            type="button"
+          >
+            city
+          </button>
+          <button
+            onClick={props.sortTableRows.bind(this, 'isActive')}
+            type="button"
+          >
+            status
+          </button>
         </div>
-        {data.map(item => (
+        {props.dataTable.data.map(item => (
           <div key={item.id} className="table-row">
             <span className="table-row__id">{item.id}</span>
             <span className="table-row__img">
@@ -53,17 +84,26 @@ function Table({ dataTable: { data } }) {
 }
 
 Table.propTypes = {
-  dataTable: PropTypes.object.isRequired
+  dataTable: PropTypes.object.isRequired,
+  sortTableRows: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
   return {
-    dataTable: state.table.dataTable
+    dataTable: state.table.dataTable,
+    id: state.table.id,
+    name: state.table.name,
+    amount: state.table.amount,
+    transactionType: state.table.transactionType,
+    isActive: state.table.isActive,
+    img: state.table.img
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    sortTableRows: (value, e) => dispatch(sortTableRows(value, e))
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);

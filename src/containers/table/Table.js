@@ -2,20 +2,39 @@ import React from 'react';
 import './Table.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { sortTableRows } from '../../store/actions/tableActions';
+import {
+  inputListener,
+  searchListener,
+  sortTableRows
+} from '../../store/actions/tableActions';
 
 function Table(props) {
+  window.addEventListener('keypress', e => {
+    if (e.key === 'Enter') props.searchListener();
+  });
+
   const sortedType = type => {
     if (props[type] === null) {
       return;
     }
     return props[type] ? 'up' : 'down';
   };
+
   return (
     <>
       <div className="search">
-        <input className="table-search" placeholder="Search..." type="text" />
-        <button type="button" className="btn-search">
+        <input
+          onChange={props.inputListener}
+          value={props.searchValue}
+          className="table-search"
+          placeholder="Search..."
+          type="text"
+        />
+        <button
+          onClick={props.searchListener}
+          type="button"
+          className="btn-search"
+        >
           Search
         </button>
       </div>
@@ -97,25 +116,31 @@ function Table(props) {
 
 Table.propTypes = {
   dataTable: PropTypes.object.isRequired,
-  sortTableRows: PropTypes.func.isRequired
+  sortTableRows: PropTypes.func.isRequired,
+  inputListener: PropTypes.func.isRequired,
+  searchValue: PropTypes.string.isRequired,
+  searchListener: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
   return {
     dataTable: state.table.dataTable,
-    id: state.table.id,
-    name: state.table.name,
-    amount: state.table.amount,
-    locationName: state.table.locationName,
-    transactionType: state.table.transactionType,
-    isActive: state.table.isActive,
-    img: state.table.img
+    searchValue: state.table.searchValue,
+    id: state.table.sortedTypes.id,
+    name: state.table.sortedTypes.name,
+    amount: state.table.sortedTypes.amount,
+    locationName: state.table.sortedTypes.locationName,
+    transactionType: state.table.sortedTypes.transactionType,
+    isActive: state.table.sortedTypes.isActive,
+    img: state.table.sortedTypes.img
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    sortTableRows: (value, e) => dispatch(sortTableRows(value, e))
+    sortTableRows: value => dispatch(sortTableRows(value)),
+    inputListener: e => dispatch(inputListener(e)),
+    searchListener: () => dispatch(searchListener())
   };
 }
 

@@ -1,4 +1,12 @@
-import { TABLE_SORT, TABLE_SORT_CLEAR, TABLE_SORT_CURRENT } from './actionTypes';
+import {
+  INPUT_SEARCH_VALUE,
+  SEARCH_ROWS,
+  TABLE_SORT,
+  TABLE_SORT_CLEAR,
+  TABLE_SORT_CURRENT
+} from './actionTypes';
+
+import defaultData from '../../api/dataTable';
 
 function changeSort(data) {
   return {
@@ -23,11 +31,27 @@ function currentSort(value, sortType) {
   };
 }
 
-export function sortTableRows(value, { target }) {
+function filteredTable(data) {
+  return {
+    type: SEARCH_ROWS,
+    payload: {
+      data
+    }
+  };
+}
+
+export function inputListener({ target }) {
+  return {
+    type: INPUT_SEARCH_VALUE,
+    payload: target.value
+  };
+}
+
+export function sortTableRows(value) {
   return (dispatch, getState) => {
     const { table } = getState();
     let newSortTable;
-    if (table[value]) {
+    if (table.sortedTypes[value]) {
       newSortTable = table.dataTable.data.reverse();
       dispatch(currentSort(false, value));
     } else {
@@ -44,5 +68,17 @@ export function sortTableRows(value, { target }) {
       dispatch(currentSort(true, value));
     }
     dispatch(changeSort(newSortTable));
+  };
+}
+
+export function searchListener() {
+  return (dispatch, getStore) => {
+    const { table } = getStore();
+    const newFilterTable = defaultData.data.filter(item => {
+      return (
+        item.name.toLowerCase().indexOf(table.searchValue.toLowerCase()) !== -1
+      );
+    });
+    dispatch(filteredTable(newFilterTable));
   };
 }

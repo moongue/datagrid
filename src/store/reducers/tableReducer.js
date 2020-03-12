@@ -1,11 +1,16 @@
 import data from '../../api/dataTable';
-import { TABLE_SORT, TABLE_SORT_CURRENT } from '../actions/actionTypes';
+import {
+  TABLE_SORT,
+  TABLE_SORT_CLEAR,
+  TABLE_SORT_CURRENT
+} from '../actions/actionTypes';
 
 const initialState = {
   dataTable: data,
   id: null,
   name: null,
   amount: null,
+  locationName: null,
   transactionType: null,
   isActive: null,
   img: null
@@ -17,6 +22,17 @@ export default function tableReducer(state = initialState, action) {
       return {
         ...state,
         dataTable: action.payload
+      };
+    case TABLE_SORT_CLEAR:
+      return {
+        ...state,
+        id: null,
+        name: null,
+        amount: null,
+        locationName: null,
+        transactionType: null,
+        isActive: null,
+        img: null
       };
     case TABLE_SORT_CURRENT:
       return {

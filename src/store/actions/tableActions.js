@@ -1,4 +1,4 @@
-import { TABLE_SORT, TABLE_SORT_CURRENT } from './actionTypes';
+import { TABLE_SORT, TABLE_SORT_CLEAR, TABLE_SORT_CURRENT } from './actionTypes';
 
 function changeSort(data) {
   return {
@@ -6,6 +6,12 @@ function changeSort(data) {
     payload: {
       data
     }
+  };
+}
+
+function clearStateSort() {
+  return {
+    type: TABLE_SORT_CLEAR
   };
 }
 
@@ -20,16 +26,20 @@ function currentSort(value, sortType) {
 export function sortTableRows(value, { target }) {
   return (dispatch, getState) => {
     const { table } = getState();
-    const newSortTable = table.dataTable.data.sort(
-      (a, b) => b[value] - a[value]
-    );
-    Promise.all([
-      dispatch(changeSort(newSortTable)),
-      dispatch(currentSort(true, value))
-    ]).then(() => {
-      if (getState().table[value]) {
-        console.log(e);
-      }
-    });
+    let newSortTable;
+
+    if (value === 'id' || value === 'amount' || value === 'isActive') {
+      newSortTable = table.dataTable.data.sort((a, b) => b[value] - a[value]);
+    } else {
+      newSortTable = table.dataTable.data.sort((a, b) => {
+        if (a[value] < b[value]) return -1;
+        if (a[value] > b[value]) return 1;
+        return 0;
+      });
+    }
+
+    dispatch(changeSort(newSortTable));
+    dispatch(clearStateSort());
+    dispatch(currentSort(true, value));
   };
 }

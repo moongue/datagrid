@@ -5,6 +5,12 @@ import PropTypes from 'prop-types';
 import { sortTableRows } from '../../store/actions/tableActions';
 
 function Table(props) {
+  const sortedType = type => {
+    if (props[type] === null) {
+      return;
+    }
+    return props[type] ? 'up' : 'down';
+  };
   return (
     <>
       <div className="search">
@@ -18,6 +24,7 @@ function Table(props) {
           <button
             onClick={props.sortTableRows.bind(this, 'id')}
             type="button"
+            className={sortedType('id')}
           >
             id
           </button>
@@ -27,30 +34,35 @@ function Table(props) {
           <button
             onClick={props.sortTableRows.bind(this, 'name')}
             type="button"
+            className={sortedType('name')}
           >
             name
           </button>
           <button
             onClick={props.sortTableRows.bind(this, 'amount')}
             type="button"
+            className={sortedType('amount')}
           >
             amount
           </button>
           <button
             onClick={props.sortTableRows.bind(this, 'transactionType')}
             type="button"
+            className={sortedType('transactionType')}
           >
             transaction
           </button>
           <button
             onClick={props.sortTableRows.bind(this, 'locationName')}
             type="button"
+            className={sortedType('locationName')}
           >
             city
           </button>
           <button
             onClick={props.sortTableRows.bind(this, 'isActive')}
             type="button"
+            className={sortedType('isActive')}
           >
             status
           </button>
@@ -94,6 +106,7 @@ function mapStateToProps(state) {
     id: state.table.id,
     name: state.table.name,
     amount: state.table.amount,
+    locationName: state.table.locationName,
     transactionType: state.table.transactionType,
     isActive: state.table.isActive,
     img: state.table.img

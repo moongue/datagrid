@@ -1,2 +1,3 @@
 export const TABLE_SORT = 'TABLE_SORT';
-export const TABLE_SORT_CURRENT = 'TABLE_SORT_ID';
+export const TABLE_SORT_CURRENT = 'TABLE_SORT_CURRENT';
+export const TABLE_SORT_CLEAR = 'TABLE_SORT_CLEAR';

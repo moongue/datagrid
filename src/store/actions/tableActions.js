@@ -27,19 +27,22 @@ export function sortTableRows(value, { target }) {
   return (dispatch, getState) => {
     const { table } = getState();
     let newSortTable;
-
-    if (value === 'id' || value === 'amount' || value === 'isActive') {
-      newSortTable = table.dataTable.data.sort((a, b) => b[value] - a[value]);
+    if (table[value]) {
+      newSortTable = table.dataTable.data.reverse();
+      dispatch(currentSort(false, value));
     } else {
-      newSortTable = table.dataTable.data.sort((a, b) => {
-        if (a[value] < b[value]) return -1;
-        if (a[value] > b[value]) return 1;
-        return 0;
-      });
+      if (value === 'id' || value === 'amount' || value === 'isActive') {
+        newSortTable = table.dataTable.data.sort((a, b) => b[value] - a[value]);
+      } else {
+        newSortTable = table.dataTable.data.sort((a, b) => {
+          if (a[value] < b[value]) return -1;
+          if (a[value] > b[value]) return 1;
+          return 0;
+        });
+      }
+      dispatch(clearStateSort());
+      dispatch(currentSort(true, value));
     }
-
     dispatch(changeSort(newSortTable));
-    dispatch(clearStateSort());
-    dispatch(currentSort(true, value));
   };
 }

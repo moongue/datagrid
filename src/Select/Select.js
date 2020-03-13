@@ -24,5 +24,6 @@ export default function MultiSelect(props) {
 }
 
 MultiSelect.propTypes = {
-  changeSortSelect: PropTypes.func.isRequired
+  changeSortSelect: PropTypes.func.isRequired,
+  defaultValues: PropTypes.array.isRequired
 };

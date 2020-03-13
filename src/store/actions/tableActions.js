@@ -92,7 +92,7 @@ export function sortTableRows(value) {
 export function searchListener() {
   return (dispatch, getStore) => {
     dispatch(changeLoader(true));
-    dispatch(selectListener(null));
+    dispatch(selectListener([]));
     const { table } = getStore();
     defaultData.data.forEach(item =>
       Object.defineProperty(item, 'img', { enumerable: false })

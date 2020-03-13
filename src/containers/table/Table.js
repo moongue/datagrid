@@ -140,6 +140,7 @@ Table.propTypes = {
   searchListener: PropTypes.func.isRequired,
   changeLoader: PropTypes.func.isRequired,
   changeSortSelect: PropTypes.func.isRequired,
+  sortedSelectType: PropTypes.array.isRequired,
   loader: PropTypes.bool.isRequired
 };
 

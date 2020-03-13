@@ -21,7 +21,7 @@ const initialState = {
     isActive: null,
     img: null
   },
-  sortedSelectType: null
+  sortedSelectType: []
 };
 
 export default function tableReducer(state = initialState, action) {

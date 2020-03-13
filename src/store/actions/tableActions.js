@@ -89,10 +89,23 @@ export function searchListener() {
       Object.defineProperty(item, 'img', { enumerable: false })
     );
     const newFilterTable = defaultData.data.filter(item => {
-      return Object.values(item).some(
-        el =>
+      if (
+        'online'.indexOf(table.searchValue.toLowerCase()) !== -1 &&
+        item.isActive
+      )
+        return true;
+
+      if (
+        'offline'.indexOf(table.searchValue.toLowerCase()) !== -1 &&
+        !item.isActive
+      )
+        return true;
+
+      return Object.values(item).some(el => {
+        return (
           `${el}`.toLowerCase().indexOf(table.searchValue.toLowerCase()) !== -1
-      );
+        );
+      });
     });
     dispatch(filteredTable(newFilterTable));
     dispatch(changeLoader(false));

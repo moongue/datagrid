@@ -3,13 +3,15 @@ import './Table.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Loader from '../../components/Loader/Loader';
-import MultiSelect from '../../Select/Select';
+import MultiSelect from '../../components/MultiSelect/MultiSelect';
+import Select from '../../components/Select/Select';
 import {
   changeLoader,
   changeSortSelect,
   inputListener,
   searchListener,
-  sortTableRows
+  sortTableRows,
+  changeSortStatus
 } from '../../store/actions/tableActions';
 
 function Table(props) {
@@ -46,10 +48,16 @@ function Table(props) {
           Search
         </button>
       </div>
-      <MultiSelect
-        defaultValues={props.sortedSelectType}
-        changeSortSelect={props.changeSortSelect}
-      />
+      <div className="row">
+        <MultiSelect
+          defaultValues={props.sortedTransactionType}
+          changeSortSelect={props.changeSortSelect}
+        />
+        <Select
+          defaultValue={props.sortedStatusType}
+          changeSortSelect={props.changeSortStatus}
+        />
+      </div>
       <div className="table">
         <div className="table-row table__header">
           <button
@@ -137,10 +145,13 @@ Table.propTypes = {
   sortTableRows: PropTypes.func.isRequired,
   inputListener: PropTypes.func.isRequired,
   searchValue: PropTypes.string.isRequired,
+  sortedStatusType: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
+    .isRequired,
   searchListener: PropTypes.func.isRequired,
   changeLoader: PropTypes.func.isRequired,
   changeSortSelect: PropTypes.func.isRequired,
-  sortedSelectType: PropTypes.array.isRequired,
+  sortedTransactionType: PropTypes.array.isRequired,
+  changeSortStatus: PropTypes.func.isRequired,
   loader: PropTypes.bool.isRequired
 };
 
@@ -149,7 +160,8 @@ function mapStateToProps(state) {
     dataTable: state.table.dataTable,
     searchValue: state.table.searchValue,
     loader: state.table.loader,
-    sortedSelectType: state.table.sortedSelectType,
+    sortedTransactionType: state.table.sortedTransactionType,
+    sortedStatusType: state.table.sortedStatusType,
     id: state.table.sortedTypes.id,
     name: state.table.sortedTypes.name,
     amount: state.table.sortedTypes.amount,
@@ -166,7 +178,8 @@ function mapDispatchToProps(dispatch) {
     inputListener: e => dispatch(inputListener(e)),
     searchListener: () => dispatch(searchListener()),
     changeLoader: value => dispatch(changeLoader(value)),
-    changeSortSelect: el => dispatch(changeSortSelect(el))
+    changeSortSelect: el => dispatch(changeSortSelect(el)),
+    changeSortStatus: value => dispatch(changeSortStatus(value))
   };
 }
 

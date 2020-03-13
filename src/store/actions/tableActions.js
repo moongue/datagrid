@@ -1,4 +1,5 @@
 import {
+  FILTER_STATUS,
   INPUT_SEARCH_VALUE,
   SEARCH_ROWS,
   SORT_SELECT,
@@ -63,6 +64,20 @@ function selectListener(value) {
   };
 }
 
+function changeSortedStatusType(value) {
+  return {
+    type: FILTER_STATUS,
+    payload: value
+  };
+}
+
+function clearSearchValue() {
+  return {
+    type: INPUT_SEARCH_VALUE,
+    payload: ''
+  };
+}
+
 export function sortTableRows(value) {
   return (dispatch, getState) => {
     dispatch(changeLoader(true));
@@ -93,6 +108,7 @@ export function searchListener() {
   return (dispatch, getStore) => {
     dispatch(changeLoader(true));
     dispatch(selectListener([]));
+    dispatch(changeSortedStatusType([]));
     const { table } = getStore();
     defaultData.data.forEach(item =>
       Object.defineProperty(item, 'img', { enumerable: false })
@@ -124,22 +140,36 @@ export function searchListener() {
 export function changeSortSelect(el) {
   return (dispatch, getState) => {
     dispatch(selectListener(el));
-    dispatch({
-      type: INPUT_SEARCH_VALUE,
-      payload: ''
-    });
+    dispatch(clearSearchValue());
+    dispatch(changeSortedStatusType([]));
     const {
-      table: { sortedSelectType }
+      table: { sortedTransactionType }
     } = getState();
-    if (sortedSelectType === null)
+    if (sortedTransactionType === null)
       return dispatch(filteredTable(defaultData.data));
     const valuesSelect = [];
-    sortedSelectType.forEach(item => valuesSelect.push(item.value));
+    sortedTransactionType.forEach(item => valuesSelect.push(item.value));
     const newDate = defaultData.data.filter(item => {
       return valuesSelect.some(
         selectName => item.transactionType.indexOf(selectName) !== -1
       );
     });
     dispatch(filteredTable(newDate));
+  };
+}
+
+export function changeSortStatus(value) {
+  return (dispatch, getState) => {
+    dispatch(changeSortedStatusType(value));
+    dispatch(selectListener([]));
+    dispatch(clearSearchValue());
+    const { table } = getState();
+    const newSortedData = defaultData.data.filter(item => {
+      if (table.sortedStatusType.value === 'online') {
+        return item.isActive;
+      }
+      return !item.isActive;
+    });
+    dispatch(changeSort(newSortedData));
   };
 }

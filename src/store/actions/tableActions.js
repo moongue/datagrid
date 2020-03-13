@@ -1,6 +1,7 @@
 import {
   INPUT_SEARCH_VALUE,
   SEARCH_ROWS,
+  SORT_SELECT,
   TABLE_LOADER,
   TABLE_SORT,
   TABLE_SORT_CLEAR,
@@ -55,6 +56,13 @@ export function inputListener({ target }) {
   };
 }
 
+function selectListener(value) {
+  return {
+    type: SORT_SELECT,
+    payload: value
+  };
+}
+
 export function sortTableRows(value) {
   return (dispatch, getState) => {
     dispatch(changeLoader(true));
@@ -84,6 +92,7 @@ export function sortTableRows(value) {
 export function searchListener() {
   return (dispatch, getStore) => {
     dispatch(changeLoader(true));
+    dispatch(selectListener(null));
     const { table } = getStore();
     defaultData.data.forEach(item =>
       Object.defineProperty(item, 'img', { enumerable: false })
@@ -109,5 +118,28 @@ export function searchListener() {
     });
     dispatch(filteredTable(newFilterTable));
     dispatch(changeLoader(false));
+  };
+}
+
+export function changeSortSelect(el) {
+  return (dispatch, getState) => {
+    dispatch(selectListener(el));
+    dispatch({
+      type: INPUT_SEARCH_VALUE,
+      payload: ''
+    });
+    const {
+      table: { sortedSelectType }
+    } = getState();
+    if (sortedSelectType === null)
+      return dispatch(filteredTable(defaultData.data));
+    const valuesSelect = [];
+    sortedSelectType.forEach(item => valuesSelect.push(item.value));
+    const newDate = defaultData.data.filter(item => {
+      return valuesSelect.some(
+        selectName => item.transactionType.indexOf(selectName) !== -1
+      );
+    });
+    dispatch(filteredTable(newDate));
   };
 }

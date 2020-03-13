@@ -1,7 +1,7 @@
 import data from '../../api/dataTable';
 import {
   INPUT_SEARCH_VALUE,
-  SEARCH_ROWS,
+  SEARCH_ROWS, SORT_SELECT,
   TABLE_LOADER,
   TABLE_SORT,
   TABLE_SORT_CLEAR,
@@ -20,7 +20,8 @@ const initialState = {
     transactionType: null,
     isActive: null,
     img: null
-  }
+  },
+  sortedSelectType: null
 };
 
 export default function tableReducer(state = initialState, action) {
@@ -65,6 +66,11 @@ export default function tableReducer(state = initialState, action) {
       return {
         ...state,
         loader: action.payload
+      };
+    case SORT_SELECT:
+      return {
+        ...state,
+        sortedSelectType: action.payload
       };
     default:
       return state;

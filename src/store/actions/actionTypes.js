@@ -4,3 +4,4 @@ export const TABLE_SORT_CLEAR = 'TABLE_SORT_CLEAR';
 export const TABLE_LOADER = 'TABLE_LOADER';
 export const INPUT_SEARCH_VALUE = 'INPUT_SEARCH_VALUE';
 export const SEARCH_ROWS = 'SEARCH_ROWS';
+export const SORT_SELECT = 'SORT_SELECT';

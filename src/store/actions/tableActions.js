@@ -85,9 +85,13 @@ export function searchListener() {
   return (dispatch, getStore) => {
     dispatch(changeLoader(true));
     const { table } = getStore();
+    defaultData.data.forEach(item =>
+      Object.defineProperty(item, 'img', { enumerable: false })
+    );
     const newFilterTable = defaultData.data.filter(item => {
-      return (
-        item.name.toLowerCase().indexOf(table.searchValue.toLowerCase()) !== -1
+      return Object.values(item).some(
+        el =>
+          `${el}`.toLowerCase().indexOf(table.searchValue.toLowerCase()) !== -1
       );
     });
     dispatch(filteredTable(newFilterTable));

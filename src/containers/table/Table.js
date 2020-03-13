@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Table.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Loader from '../../components/Loader/Loader';
 import {
+  changeLoader,
   inputListener,
   searchListener,
   sortTableRows
@@ -19,6 +21,10 @@ function Table(props) {
     }
     return props[type] ? 'up' : 'down';
   };
+
+  useEffect(() => {
+    props.changeLoader(false);
+  });
 
   return (
     <>
@@ -86,29 +92,35 @@ function Table(props) {
             status
           </button>
         </div>
-        {props.dataTable.data.map(item => (
-          <div key={item.id} className="table-row">
-            <span className="table-row__id">{item.id}</span>
-            <span className="table-row__img">
-              <img src={item.img} alt="avatar" />
-            </span>
-            <span className="table-row__name">{item.name}</span>
-            <span className="table-row__amount">{item.amount}$</span>
-            <span className="table-row__transaction">
-              {item.transactionType}
-            </span>
-            <span className="table-row__location">{item.locationName}</span>
-            <span className="table-row__type">
-              {item.isActive ? (
-                <p className="table-row__type table-row__type_online">online</p>
-              ) : (
-                <p className="table-row__type table-row__type_offline">
-                  offline
-                </p>
-              )}
-            </span>
-          </div>
-        ))}
+        {props.loader ? (
+          <Loader />
+        ) : (
+          props.dataTable.data.map(item => (
+            <div key={item.id} className="table-row">
+              <span className="table-row__id">{item.id}</span>
+              <span className="table-row__img">
+                <img src={item.img} alt="avatar" />
+              </span>
+              <span className="table-row__name">{item.name}</span>
+              <span className="table-row__amount">{item.amount}$</span>
+              <span className="table-row__transaction">
+                {item.transactionType}
+              </span>
+              <span className="table-row__location">{item.locationName}</span>
+              <span className="table-row__type">
+                {item.isActive ? (
+                  <p className="table-row__type table-row__type_online">
+                    online
+                  </p>
+                ) : (
+                  <p className="table-row__type table-row__type_offline">
+                    offline
+                  </p>
+                )}
+              </span>
+            </div>
+          ))
+        )}
       </div>
     </>
   );
@@ -119,13 +131,16 @@ Table.propTypes = {
   sortTableRows: PropTypes.func.isRequired,
   inputListener: PropTypes.func.isRequired,
   searchValue: PropTypes.string.isRequired,
-  searchListener: PropTypes.func.isRequired
+  searchListener: PropTypes.func.isRequired,
+  changeLoader: PropTypes.func.isRequired,
+  loader: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
   return {
     dataTable: state.table.dataTable,
     searchValue: state.table.searchValue,
+    loader: state.table.loader,
     id: state.table.sortedTypes.id,
     name: state.table.sortedTypes.name,
     amount: state.table.sortedTypes.amount,
@@ -140,7 +155,8 @@ function mapDispatchToProps(dispatch) {
   return {
     sortTableRows: value => dispatch(sortTableRows(value)),
     inputListener: e => dispatch(inputListener(e)),
-    searchListener: () => dispatch(searchListener())
+    searchListener: () => dispatch(searchListener()),
+    changeLoader: value => dispatch(changeLoader(value))
   };
 }
 

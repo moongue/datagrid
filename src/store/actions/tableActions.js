@@ -1,6 +1,7 @@
 import {
   INPUT_SEARCH_VALUE,
   SEARCH_ROWS,
+  TABLE_LOADER,
   TABLE_SORT,
   TABLE_SORT_CLEAR,
   TABLE_SORT_CURRENT
@@ -40,6 +41,13 @@ function filteredTable(data) {
   };
 }
 
+export function changeLoader(value) {
+  return {
+    type: TABLE_LOADER,
+    payload: value
+  };
+}
+
 export function inputListener({ target }) {
   return {
     type: INPUT_SEARCH_VALUE,
@@ -49,6 +57,7 @@ export function inputListener({ target }) {
 
 export function sortTableRows(value) {
   return (dispatch, getState) => {
+    dispatch(changeLoader(true));
     const { table } = getState();
     let newSortTable;
     if (table.sortedTypes[value]) {
@@ -68,11 +77,13 @@ export function sortTableRows(value) {
       dispatch(currentSort(true, value));
     }
     dispatch(changeSort(newSortTable));
+    dispatch(changeLoader(false));
   };
 }
 
 export function searchListener() {
   return (dispatch, getStore) => {
+    dispatch(changeLoader(true));
     const { table } = getStore();
     const newFilterTable = defaultData.data.filter(item => {
       return (
@@ -80,5 +91,6 @@ export function searchListener() {
       );
     });
     dispatch(filteredTable(newFilterTable));
+    dispatch(changeLoader(false));
   };
 }

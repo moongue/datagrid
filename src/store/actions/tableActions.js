@@ -1,4 +1,5 @@
 import {
+  CHANGE_CHECKED_ROW,
   FILTER_STATUS,
   INPUT_SEARCH_VALUE,
   SEARCH_ROWS,
@@ -6,7 +7,8 @@ import {
   TABLE_LOADER,
   TABLE_SORT,
   TABLE_SORT_CLEAR,
-  TABLE_SORT_CURRENT, VIRTUALIZE_TABLE
+  TABLE_SORT_CURRENT,
+  VIRTUALIZE_TABLE
 } from './actionTypes';
 
 import defaultData from '../../api/dataTable';
@@ -78,9 +80,19 @@ function clearSearchValue() {
   };
 }
 
-export function changeVirtualizeTable() {
+function changeCheckedRow(newCheckedRow) {
   return {
-    type: VIRTUALIZE_TABLE
+    type: CHANGE_CHECKED_ROW,
+    payload: newCheckedRow
+  };
+}
+
+export function changeVirtualizeTable() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: VIRTUALIZE_TABLE
+    });
+    localStorage.setItem('data', JSON.stringify(getState().table));
   };
 }
 
@@ -107,18 +119,16 @@ export function sortTableRows(value) {
     }
     dispatch(changeSort(newSortTable));
     dispatch(changeLoader(false));
+    localStorage.setItem('data', JSON.stringify(getState().table));
   };
 }
 
 export function searchListener() {
-  return (dispatch, getStore) => {
+  return (dispatch, getState) => {
     dispatch(changeLoader(true));
     dispatch(selectListener([]));
     dispatch(changeSortedStatusType([]));
-    const { table } = getStore();
-    defaultData.data.forEach(item =>
-      Object.defineProperty(item, 'img', { enumerable: false })
-    );
+    const { table } = getState();
     const newFilterTable = defaultData.data.filter(item => {
       if (
         'online'.indexOf(table.searchValue.toLowerCase()) !== -1 &&
@@ -131,8 +141,8 @@ export function searchListener() {
         !item.isActive
       )
         return true;
-
-      return Object.values(item).some(el => {
+      const arrValues = Object.values(item);
+      return arrValues.some(el => {
         return (
           `${el}`.toLowerCase().indexOf(table.searchValue.toLowerCase()) !== -1
         );
@@ -140,6 +150,7 @@ export function searchListener() {
     });
     dispatch(filteredTable(newFilterTable));
     dispatch(changeLoader(false));
+    localStorage.setItem('data', JSON.stringify(getState().table));
   };
 }
 
@@ -161,6 +172,7 @@ export function changeSortSelect(el) {
       );
     });
     dispatch(filteredTable(newDate));
+    localStorage.setItem('data', JSON.stringify(getState().table));
   };
 }
 
@@ -177,5 +189,42 @@ export function changeSortStatus(value) {
       return !item.isActive;
     });
     dispatch(changeSort(newSortedData));
+    localStorage.setItem('data', JSON.stringify(getState().table));
+  };
+}
+
+export function checkRow(id, e) {
+  return (dispatch, getState) => {
+    const newArr = [...getState().table.dataTable.data];
+    newArr[id].active = !newArr[id].active;
+    dispatch(changeSort(newArr));
+
+    const { checkedRows } = getState().table;
+    let haveItem = false;
+
+    checkedRows.forEach(item => (item.id === id ? (haveItem = true) : false));
+
+    if (!haveItem) {
+      checkedRows.push(getState().table.dataTable.data[id]);
+      dispatch(changeCheckedRow(checkedRows));
+    } else {
+      let deletedRow;
+      checkedRows.forEach((item, i) => {
+        if (item.id === id) deletedRow = i;
+      });
+      checkedRows.splice(deletedRow, 1);
+      dispatch(changeCheckedRow(checkedRows));
+    }
+  };
+}
+
+export function deleteRows() {
+  return (dispatch, getState) => {
+    const newArr = Object.values(
+      getState().table.checkedRows.map(item => item.id)
+    );
+    const newData = getState().table.dataTable.data.filter((item) => newArr.indexOf(item.id) === -1);
+    dispatch(changeCheckedRow([]));
+    dispatch(changeSort(newData));
   };
 }

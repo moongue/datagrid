@@ -10,6 +10,7 @@ export const makeFake = idx => {
     transactionType: faker.finance.transactionType(),
     locationName: faker.address.city(),
     isActive: faker.random.boolean(),
+    active: false,
     img: faker.image.avatar()
   };
 };

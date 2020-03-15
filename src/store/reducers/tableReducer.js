@@ -1,5 +1,6 @@
 import data from '../../api/dataTable';
 import {
+  CHANGE_CHECKED_ROW,
   FILTER_STATUS,
   INPUT_SEARCH_VALUE,
   SEARCH_ROWS,
@@ -7,26 +8,33 @@ import {
   TABLE_LOADER,
   TABLE_SORT,
   TABLE_SORT_CLEAR,
-  TABLE_SORT_CURRENT, VIRTUALIZE_TABLE
+  TABLE_SORT_CURRENT,
+  VIRTUALIZE_TABLE
 } from '../actions/actionTypes';
 
-const initialState = {
-  dataTable: data,
-  searchValue: '',
-  loader: true,
-  virtualizeTable: true,
-  sortedTypes: {
-    id: null,
-    name: null,
-    amount: null,
-    locationName: null,
-    transactionType: null,
-    isActive: null,
-    img: null
-  },
-  sortedTransactionType: [],
-  sortedStatusType: []
-};
+let initialState;
+if (localStorage.getItem('data')) {
+  initialState = JSON.parse(localStorage.getItem('data'));
+} else {
+  initialState = {
+    dataTable: data,
+    searchValue: '',
+    loader: true,
+    virtualizeTable: true,
+    sortedTypes: {
+      id: null,
+      name: null,
+      amount: null,
+      locationName: null,
+      transactionType: null,
+      isActive: null,
+      img: null
+    },
+    sortedTransactionType: [],
+    sortedStatusType: [],
+    checkedRows: []
+  };
+}
 
 export default function tableReducer(state = initialState, action) {
   switch (action.type) {
@@ -85,6 +93,11 @@ export default function tableReducer(state = initialState, action) {
       return {
         ...state,
         virtualizeTable: !state.virtualizeTable
+      };
+    case CHANGE_CHECKED_ROW:
+      return {
+        ...state,
+        checkedRows: [...action.payload]
       };
     default:
       return state;

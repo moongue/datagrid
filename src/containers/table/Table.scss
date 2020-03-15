@@ -53,9 +53,40 @@
     justify-content: space-between;
     align-items: center;
     padding: 5px 10px;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
 
     &.even {
       background: #f4d9d938;
+    }
+
+    &:not(.table__header):hover {
+      background: rgba(19, 203, 112, .3);
+      padding-left: 30px;
+      position: relative;
+    }
+
+    &.check-active {
+      position: relative;
+      background: rgba(19, 203, 112, .3);
+      padding-left: 30px;
+      &:before {
+        content: '\2713';
+        color: #13cb70;
+        position: absolute;
+        left: 10px;
+        top: calc(50% - 10.8px);
+        animation: showCheck .3s ease-in-out;
+      }
+    }
+
+    @keyframes showCheck {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
     }
 
     span, button {
@@ -160,4 +191,23 @@
 .row {
   display: flex;
   justify-content: space-between;
+}
+
+.stroke {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  font-size: 16px;
+  margin-left: 10px;
+  border: none;
+  background: #13cb70;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  &:disabled {
+    background: rgba(19, 203, 112, .2);
+  }
 }

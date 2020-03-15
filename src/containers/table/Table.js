@@ -14,7 +14,8 @@ import {
   searchListener,
   sortTableRows,
   changeSortStatus,
-  changeVirtualizeTable
+  changeVirtualizeTable,
+  checkRow, deleteRows
 } from '../../store/actions/tableActions';
 
 function Table(props) {
@@ -37,7 +38,10 @@ function Table(props) {
     <div
       key={props.dataTable.data[index].id}
       style={style}
-      className={`${'table-row'} ${index % 2 !== 0 ? 'even' : ''}`}
+      className={`${'table-row'} ${index % 2 !== 0 ? 'even' : ''} ${
+        props.dataTable.data[index].active ? 'check-active' : ''
+      }`}
+      onClick={e => props.checkRow(index, e)}
     >
       <span className="table-row__id">{props.dataTable.data[index].id}</span>
       <span className="table-row__img">
@@ -93,10 +97,21 @@ function Table(props) {
           changeSortSelect={props.changeSortStatus}
         />
       </div>
-      <ToggleInput
-        defaultValue={props.virtualizeTable}
-        listener={props.changeVirtualizeTable}
-      />
+      <div className="stroke">
+        <ToggleInput
+          defaultValue={props.virtualizeTable}
+          listener={props.changeVirtualizeTable}
+        />
+        <p style={{ margin: '0 0 0 50px' }}>Select items: {props.checkedRows.length}</p>
+        <button
+          className="btn"
+          type="button"
+          disabled={!props.checkedRows.length}
+          onClick={props.deleteRows}
+        >
+          Delete
+        </button>
+      </div>
       <div className="table">
         <div className="table-row table__header">
           <button
@@ -181,13 +196,17 @@ Table.propTypes = {
   sortedTransactionType: PropTypes.array.isRequired,
   changeVirtualizeTable: PropTypes.func.isRequired,
   changeSortStatus: PropTypes.func.isRequired,
+  checkedRows: PropTypes.array.isRequired,
   virtualizeTable: PropTypes.bool.isRequired,
+  checkRow: PropTypes.func.isRequired,
+  deleteRows: PropTypes.func.isRequired,
   loader: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
   return {
     dataTable: state.table.dataTable,
+    checkedRows: state.table.checkedRows,
     searchValue: state.table.searchValue,
     loader: state.table.loader,
     sortedTransactionType: state.table.sortedTransactionType,
@@ -211,7 +230,9 @@ function mapDispatchToProps(dispatch) {
     changeLoader: value => dispatch(changeLoader(value)),
     changeSortSelect: el => dispatch(changeSortSelect(el)),
     changeSortStatus: value => dispatch(changeSortStatus(value)),
-    changeVirtualizeTable: () => dispatch(changeVirtualizeTable())
+    changeVirtualizeTable: () => dispatch(changeVirtualizeTable()),
+    checkRow: (id, e) => dispatch(checkRow(id, e)),
+    deleteRows: () => dispatch(deleteRows())
   };
 }
 

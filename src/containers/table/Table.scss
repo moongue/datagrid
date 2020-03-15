@@ -124,6 +124,10 @@
         flex-basis: 10%;
         text-align: right;
       }
+
+      &:disabled {
+        cursor: auto !important;
+      }
     }
 
     &__img {
@@ -147,6 +151,7 @@
         color: rgba(105, 100, 34, 0.4);
       }
     }
+
   }
 
   &__header {
@@ -209,5 +214,6 @@
   cursor: pointer;
   &:disabled {
     background: rgba(19, 203, 112, .2);
+    cursor: auto;
   }
 }

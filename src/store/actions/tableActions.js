@@ -217,6 +217,7 @@ export function checkRow(index, id) {
       checkedRows.splice(deletedRow, 1);
       dispatch(changeCheckedRow(checkedRows));
     }
+    localStorage.setItem('data', JSON.stringify(getState().table));
   };
 }
 
@@ -230,5 +231,6 @@ export function deleteRows() {
     );
     dispatch(changeCheckedRow([]));
     dispatch(changeSort(newData));
+    localStorage.setItem('data', JSON.stringify(getState().table));
   };
 }

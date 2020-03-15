@@ -6,7 +6,7 @@ import {
   TABLE_LOADER,
   TABLE_SORT,
   TABLE_SORT_CLEAR,
-  TABLE_SORT_CURRENT
+  TABLE_SORT_CURRENT, VIRTUALIZE_TABLE
 } from './actionTypes';
 
 import defaultData from '../../api/dataTable';
@@ -75,6 +75,12 @@ function clearSearchValue() {
   return {
     type: INPUT_SEARCH_VALUE,
     payload: ''
+  };
+}
+
+export function changeVirtualizeTable() {
+  return {
+    type: VIRTUALIZE_TABLE
   };
 }
 

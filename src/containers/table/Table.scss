@@ -31,18 +31,14 @@
   font-size: 18px;
 }
 
-.table {
-  margin-top: 15px;
-  min-height: 650px;
-  height: calc(100vh - 7vh - 40px);
-  display: flex;
-  flex-direction: column;
-  max-height: 700px;
-  overflow-y: scroll;
+.default-table {
+  height: 664px;
+  overflow: auto;
+}
 
+.table, .default-table {
   &::-webkit-scrollbar {
     border-radius: 4px;
-    box-shadow: 2px 2px 6px 0 rgba(0, 0, 0, 0.2);
   }
 
   &::-webkit-scrollbar-thumb {
@@ -51,12 +47,16 @@
   }
 
   &-row {
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 5px 10px;
-    margin: 5px 5px 5px 0;
-    box-shadow: 2px 2px 6px 0 rgba(0, 0, 0, 0.2);
+
+    &.even {
+      background: #f4d9d938;
+    }
 
     span, button {
       text-align: center;
@@ -119,6 +119,7 @@
   }
 
   &__header {
+    margin: 15px 0 0 ;
     padding: 10px;
     position: sticky;
     top: 0;

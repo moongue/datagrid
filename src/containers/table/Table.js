@@ -2,16 +2,19 @@ import React, { useEffect } from 'react';
 import './Table.scss';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FixedSizeList } from 'react-window';
 import Loader from '../../components/Loader/Loader';
 import MultiSelect from '../../components/MultiSelect/MultiSelect';
 import Select from '../../components/Select/Select';
+import ToggleInput from '../../components/Toggle/Toggle';
 import {
   changeLoader,
   changeSortSelect,
   inputListener,
   searchListener,
   sortTableRows,
-  changeSortStatus
+  changeSortStatus,
+  changeVirtualizeTable
 } from '../../store/actions/tableActions';
 
 function Table(props) {
@@ -29,6 +32,38 @@ function Table(props) {
   useEffect(() => {
     props.changeLoader(false);
   });
+
+  const Row = ({ index, style }) => (
+    <div
+      key={props.dataTable.data[index].id}
+      style={style}
+      className={`${'table-row'} ${index % 2 !== 0 ? 'even' : ''}`}
+    >
+      <span className="table-row__id">{props.dataTable.data[index].id}</span>
+      <span className="table-row__img">
+        <img src={props.dataTable.data[index].img} alt="avatar" />
+      </span>
+      <span className="table-row__name">
+        {props.dataTable.data[index].name}
+      </span>
+      <span className="table-row__amount">
+        {props.dataTable.data[index].amount}$
+      </span>
+      <span className="table-row__transaction">
+        {props.dataTable.data[index].transactionType}
+      </span>
+      <span className="table-row__location">
+        {props.dataTable.data[index].locationName}
+      </span>
+      <span className="table-row__type">
+        {props.dataTable.data[index].isActive ? (
+          <p className="table-row__type table-row__type_online">online</p>
+        ) : (
+          <p className="table-row__type table-row__type_offline">offline</p>
+        )}
+      </span>
+    </div>
+  );
 
   return (
     <>
@@ -58,6 +93,10 @@ function Table(props) {
           changeSortSelect={props.changeSortStatus}
         />
       </div>
+      <ToggleInput
+        defaultValue={props.virtualizeTable}
+        listener={props.changeVirtualizeTable}
+      />
       <div className="table">
         <div className="table-row table__header">
           <button
@@ -108,32 +147,21 @@ function Table(props) {
         </div>
         {props.loader ? (
           <Loader />
+        ) : props.virtualizeTable ? (
+          <FixedSizeList
+            height={664}
+            itemSize={64}
+            itemCount={props.dataTable.data.length}
+            className="table"
+          >
+            {Row}
+          </FixedSizeList>
         ) : (
-          props.dataTable.data.map(item => (
-            <div key={item.id} className="table-row">
-              <span className="table-row__id">{item.id}</span>
-              <span className="table-row__img">
-                <img src={item.img} alt="avatar" />
-              </span>
-              <span className="table-row__name">{item.name}</span>
-              <span className="table-row__amount">{item.amount}$</span>
-              <span className="table-row__transaction">
-                {item.transactionType}
-              </span>
-              <span className="table-row__location">{item.locationName}</span>
-              <span className="table-row__type">
-                {item.isActive ? (
-                  <p className="table-row__type table-row__type_online">
-                    online
-                  </p>
-                ) : (
-                  <p className="table-row__type table-row__type_offline">
-                    offline
-                  </p>
-                )}
-              </span>
-            </div>
-          ))
+          <div className="default-table">
+            {props.dataTable.data.map((item, i) => (
+              <Row index={i} key={i} />
+            ))}
+          </div>
         )}
       </div>
     </>
@@ -151,7 +179,9 @@ Table.propTypes = {
   changeLoader: PropTypes.func.isRequired,
   changeSortSelect: PropTypes.func.isRequired,
   sortedTransactionType: PropTypes.array.isRequired,
+  changeVirtualizeTable: PropTypes.func.isRequired,
   changeSortStatus: PropTypes.func.isRequired,
+  virtualizeTable: PropTypes.bool.isRequired,
   loader: PropTypes.bool.isRequired
 };
 
@@ -162,6 +192,7 @@ function mapStateToProps(state) {
     loader: state.table.loader,
     sortedTransactionType: state.table.sortedTransactionType,
     sortedStatusType: state.table.sortedStatusType,
+    virtualizeTable: state.table.virtualizeTable,
     id: state.table.sortedTypes.id,
     name: state.table.sortedTypes.name,
     amount: state.table.sortedTypes.amount,
@@ -179,7 +210,8 @@ function mapDispatchToProps(dispatch) {
     searchListener: () => dispatch(searchListener()),
     changeLoader: value => dispatch(changeLoader(value)),
     changeSortSelect: el => dispatch(changeSortSelect(el)),
-    changeSortStatus: value => dispatch(changeSortStatus(value))
+    changeSortStatus: value => dispatch(changeSortStatus(value)),
+    changeVirtualizeTable: () => dispatch(changeVirtualizeTable())
   };
 }
 

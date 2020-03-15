@@ -7,13 +7,14 @@ import {
   TABLE_LOADER,
   TABLE_SORT,
   TABLE_SORT_CLEAR,
-  TABLE_SORT_CURRENT
+  TABLE_SORT_CURRENT, VIRTUALIZE_TABLE
 } from '../actions/actionTypes';
 
 const initialState = {
   dataTable: data,
   searchValue: '',
   loader: true,
+  virtualizeTable: true,
   sortedTypes: {
     id: null,
     name: null,
@@ -79,6 +80,11 @@ export default function tableReducer(state = initialState, action) {
       return {
         ...state,
         sortedStatusType: action.payload
+      };
+    case VIRTUALIZE_TABLE:
+      return {
+        ...state,
+        virtualizeTable: !state.virtualizeTable
       };
     default:
       return state;

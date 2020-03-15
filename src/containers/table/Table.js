@@ -41,7 +41,7 @@ function Table(props) {
       className={`${'table-row'} ${index % 2 !== 0 ? 'even' : ''} ${
         props.dataTable.data[index].active ? 'check-active' : ''
       }`}
-      onClick={e => props.checkRow(index, e)}
+      onClick={() => props.checkRow(index, props.dataTable.data[index].id)}
     >
       <span className="table-row__id">{props.dataTable.data[index].id}</span>
       <span className="table-row__img">
@@ -231,7 +231,7 @@ function mapDispatchToProps(dispatch) {
     changeSortSelect: el => dispatch(changeSortSelect(el)),
     changeSortStatus: value => dispatch(changeSortStatus(value)),
     changeVirtualizeTable: () => dispatch(changeVirtualizeTable()),
-    checkRow: (id, e) => dispatch(checkRow(id, e)),
+    checkRow: (index, id) => dispatch(checkRow(index, id)),
     deleteRows: () => dispatch(deleteRows())
   };
 }

@@ -193,19 +193,21 @@ export function changeSortStatus(value) {
   };
 }
 
-export function checkRow(id, e) {
+export function checkRow(index, id) {
   return (dispatch, getState) => {
     const newArr = [...getState().table.dataTable.data];
-    newArr[id].active = !newArr[id].active;
+    newArr[index].active = !newArr[index].active;
     dispatch(changeSort(newArr));
 
     const { checkedRows } = getState().table;
     let haveItem = false;
 
-    checkedRows.forEach(item => (item.id === id ? (haveItem = true) : false));
+    checkedRows.forEach(item => {
+      if (item.id === id) haveItem = true;
+    });
 
     if (!haveItem) {
-      checkedRows.push(getState().table.dataTable.data[id]);
+      checkedRows.push(getState().table.dataTable.data[index]);
       dispatch(changeCheckedRow(checkedRows));
     } else {
       let deletedRow;
@@ -223,7 +225,9 @@ export function deleteRows() {
     const newArr = Object.values(
       getState().table.checkedRows.map(item => item.id)
     );
-    const newData = getState().table.dataTable.data.filter((item) => newArr.indexOf(item.id) === -1);
+    const newData = getState().table.dataTable.data.filter(
+      item => newArr.indexOf(item.id) === -1
+    );
     dispatch(changeCheckedRow([]));
     dispatch(changeSort(newData));
   };

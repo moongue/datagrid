@@ -142,6 +142,7 @@ export function searchListener() {
       )
         return true;
       const arrValues = Object.values(item);
+      arrValues.length -= 2;
       return arrValues.some(el => {
         return (
           `${el}`.toLowerCase().indexOf(table.searchValue.toLowerCase()) !== -1
